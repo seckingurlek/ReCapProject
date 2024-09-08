@@ -1,5 +1,7 @@
 ﻿using Business.Concrete;
+using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,10 +11,21 @@ namespace ConsoleUI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-           CarManager carManager =new CarManager(new InMemoryCarDal());
-            foreach(var car in carManager.GetAll())
+            //Colorize();
+           CarManager carManager =new CarManager(new EfCarDal());
+            foreach (var car in carManager.GetCarsByBrandId(1))
             {
                 Console.WriteLine(car.Description);
+            }
+           
+        }
+
+        private static void Colorize()
+        {
+            ColorManager coloranager = new ColorManager(new EfColorDal());
+            foreach (var color in coloranager.GetAll())
+            {
+                Console.WriteLine(color.ColorName);
             }
         }
     }
