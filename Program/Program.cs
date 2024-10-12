@@ -12,11 +12,11 @@ namespace ConsoleUI // Note: actual namespace depends on the project name.
         static void Main(string[] args)
         {
             //Colorize();
-           CarManager carManager =new CarManager(new EfCarDal());
-            foreach (var car in carManager.GetCarsByBrandId(1))
-            {
-                Console.WriteLine(car.Description);
-            }
+           //CarManager carManager =new CarManager(new EfCarDal());
+           // foreach (var car in carManager.GetCarsByBrandId(2))
+           // {
+           //     Console.WriteLine(car.Description);
+           // }
            
         }
 

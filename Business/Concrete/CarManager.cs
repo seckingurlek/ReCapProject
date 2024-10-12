@@ -9,6 +9,7 @@ using DataAccess.Abstract;
 using Core.Utilities;
 using Business.Constants;
 using Core.Utilities.Results;
+using Entities.DTOs;
 
 namespace Business.Concrete
 {
@@ -43,6 +44,12 @@ namespace Business.Concrete
             //iş kodları
            return new SuccessDataResult<List<Car>>(_carDal.GetAll(),Messages.CarAdded);
            
+        }
+
+        public IDataResult<List<CarDetailDTO>> GetCarDetails(Car car)
+        {
+                return new SuccessDataResult<List<CarDetailDTO>>(_carDal.GetCarDetails());
+            
         }
 
         public IDataResult <List<Car>> GetCarsByBrandId(int brandId)
