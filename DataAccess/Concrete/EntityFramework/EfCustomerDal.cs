@@ -17,10 +17,10 @@ namespace DataAccess.Concrete.EntityFramework
             using (ReCapDBContext context = new ReCapDBContext())
             {
                 var result = from c in context.Customers
-                             join u in context.Users on c.UserId equals u.UserId
+                             join u in context.Users on c.UserId equals u.Id
                              select new CustomerDetailDTO
                              {
-                                 UserId = u.UserId,
+                                 UserId = u.Id,
                                  CompanyName = c.CompanyName
                              };
                 return result.ToList();

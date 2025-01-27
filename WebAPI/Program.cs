@@ -1,4 +1,3 @@
-
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using Business.Abstract;
@@ -6,6 +5,13 @@ using Business.Concrete;
 using Business.DependencyResolvers.Autofac;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using Core.Utilities.Security.JWT;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Core.Utilities.Security.Encryption;
+using Core.DependencyResolvers;
+using Core.Utilities.IoC;
+using Core.Extensions;
 
 namespace WebAPI
 {
@@ -21,22 +27,38 @@ namespace WebAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            //builder.Services.AddHttpContextAccessor();
+            var configuration = builder.Configuration;
 
-            // IoC kýsmý:
-            //builder.Services.AddSingleton<ICarService, CarManager>();
-            //builder.Services.AddSingleton<ICarDal, EfCarDal>();
-            //builder.Services.AddSingleton<IBrandService, BrandManager>();
-            //builder.Services.AddSingleton<IBrandDal, EfBrandDal>();
-            //builder.Services.AddSingleton<IColorService, ColorManager>();
-            //builder.Services.AddSingleton<IColorDal, EfColorDal>();
-            //builder.Services.AddSingleton<IRentalService, RentalManager>();
-            //builder.Services.AddSingleton<IRentalDal, EfRentalDal>();
+            var tokenOptions = configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+               {
+                   options.TokenValidationParameters = new TokenValidationParameters
+                   {
+                       ValidateIssuer = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidIssuer = tokenOptions.Issuer,
+                       ValidAudience = tokenOptions.Audience,
+                       ValidateIssuerSigningKey = true,
+                       IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+                   };
+               });
+
+
+
             builder.Host.UseServiceProviderFactory(services => new AutofacServiceProviderFactory())
                .ConfigureContainer<ContainerBuilder>(builder =>
                {
                    builder.RegisterModule(new AutofacBusinessModule());
                });
             // .NET Core yerine baþka bi ioc için yukarýdaki hareket yapýlýr.
+
+            builder.Services.AddDependencyResolvers(new ICoreModule[] {
+                  new CoreModule()
+            });
 
             var app = builder.Build();
 
@@ -48,9 +70,10 @@ namespace WebAPI
             }
 
             app.UseHttpsRedirection();
-
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseStaticFiles();
 
             app.MapControllers();
 

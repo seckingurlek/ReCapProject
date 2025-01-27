@@ -20,13 +20,13 @@ namespace ConsoleUI // Note: actual namespace depends on the project name.
            
         }
 
-        private static void Colorize()
-        {
-            ColorManager coloranager = new ColorManager(new EfColorDal());
-            foreach (var color in coloranager.GetAll())
-            {
-                Console.WriteLine(color.ColorName);
-            }
-        }
+        //private static void Colorize()
+        //{
+        //    ColorManager colorManager = new ColorManager(new EfColorDal());
+        //    foreach (var color in colorManager.GetAll())
+        //    {
+        //        Console.WriteLine(color.ColorName);
+        //    }
+        //}
     }
 }
